@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- viewport é o que deixa o site responsivo no celular, não mexer -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minhas tarefas</title>
+
+<link rel="stylesheet" href="lista-de-tarefas.css">
+</head>
+
+<body>
+<a class="pular" href="#nova">Pular para adicionar tarefa</a>
+
+<!-- ===== Cabeçalho ===== -->
+<header class="topo">
+  <div class="topo-interno">
+    <h1>Minhas tarefas</h1>
+  </div>
+</header>
+
+<div class="container">
+  <details class="painel-acessibilidade">
+    <summary class="acessibilidade-resumo">
+      <h2 id="titulo-acessibilidade">Acessibilidade</h2>
+    </summary>
+    <div class="painel-acessibilidade-conteudo" role="group" aria-labelledby="titulo-acessibilidade">
+      <p class="suave descricao-acessibilidade">Personalize a experiência conforme sua necessidade.</p>
+
+      <div class="recursos">
+      <article class="recurso">
+        <div class="recurso-cabecalho">
+          <svg class="icone-recurso" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7V4h16v3M9 20h6M12 4v16M5 11h4m6 0h4" />
+          </svg>
+          <h3>Tamanho do texto</h3>
+        </div>
+        <div class="controle-tamanho" role="group" aria-label="Tamanho do texto">
+          <button type="button" id="menos" aria-label="Diminuir o texto">A−</button>
+          <span id="tamanho" aria-live="polite">Texto: 100%</span>
+          <button type="button" id="mais" aria-label="Aumentar o texto">A+</button>
+        </div>
+      </article>
+
+      <article class="recurso">
+        <div class="recurso-cabecalho">
+          <svg class="icone-recurso" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+          </svg>
+          <h3>Alto contraste</h3>
+        </div>
+        <button type="button" data-opcao="contraste" aria-pressed="false">
+          <span>Alto contraste</span><span class="estado" aria-hidden="true"></span>
+        </button>
+      </article>
+
+      <article class="recurso">
+        <div class="recurso-cabecalho">
+          <svg class="icone-recurso" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h16M4 12h16M4 17h10" />
+            <path d="M18 15v5m-2.5-2.5h5" />
+          </svg>
+          <h3>Fonte para dislexia</h3>
+        </div>
+        <button type="button" data-opcao="dislexia" aria-pressed="false">
+          <span>Fonte para dislexia</span><span class="estado" aria-hidden="true"></span>
+        </button>
+      </article>
+
+      <article class="recurso">
+        <div class="recurso-cabecalho">
+          <svg class="icone-recurso" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          <h3>Modo foco</h3>
+        </div>
+        <button type="button" data-opcao="foco" aria-pressed="false">
+          <span>Uma tarefa pendente</span><span class="estado" aria-hidden="true"></span>
+        </button>
+      </article>
+      </div>
+
+      <details class="mais-configuracoes">
+        <summary>Mais configurações</summary>
+        <div class="config-secundaria" role="group" aria-label="Configurações adicionais">
+          <button type="button" data-opcao="confirmar" aria-pressed="true">
+            <span>Confirmar antes de concluir tarefas</span><span class="estado" aria-hidden="true"></span>
+          </button>
+          <button type="button" id="trocar-nome">Alterar meu nome</button>
+        </div>
+      </details>
+    </div>
+  </details>
+
+  <!-- o texto de verdade é escrito pelo JS (escreverSaudacao) -->
+  <p id="saudacao" class="saudacao">Olá! O que vamos fazer hoje?</p>
+
+  <main>
+    <!-- ===== Formulário ===== -->
+    <form id="form" novalidate>
+      <label for="nova">O que você precisa fazer?</label>
+      <div class="linha">
+        <input type="text" id="nova" maxlength="120" autocomplete="off"
+               placeholder="Ex.: Ligar para o dentista" aria-describedby="dica">
+        <button type="submit" class="primario">Adicionar</button>
+      </div>
+      <p id="dica" class="suave">Dica: frases curtas, começando com um verbo.</p>
+    </form>
+
+    <!-- mensagens pro usuário (também lida em voz alta por leitor de tela) -->
+    <p id="aviso" role="status" aria-live="polite" class="suave"></p>
+
+    <!-- ===== Lista ===== -->
+    <section aria-labelledby="titulo-lista">
+      <h2 id="titulo-lista" tabindex="-1">Suas tarefas</h2>
+      <p id="contagem"></p>
+      <progress id="barra" max="100" value="0" aria-labelledby="contagem"></progress>
+
+      <div class="grupo" role="group" aria-label="Filtrar tarefas">
+        <button type="button" data-filtro="todas" aria-pressed="true">Todas</button>
+        <button type="button" data-filtro="pendentes" aria-pressed="false">Pendentes</button>
+        <button type="button" data-filtro="feitas" aria-pressed="false">Concluídas</button>
+      </div>
+
+      <ul id="lista"></ul>
+      <p id="vazio" class="suave" hidden></p>
+
+      <div class="grupo">
+        <button type="button" id="limpar" class="perigo">Limpar concluídas</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== Diálogo da dupla checagem ===== -->
+<dialog id="dialogo" aria-labelledby="dialogo-titulo" aria-describedby="dialogo-texto">
+  <form method="dialog" style="border:0;padding:0;margin:0;background:none;">
+    <h2 id="dialogo-titulo">Tem certeza?</h2>
+    <p id="dialogo-texto"></p>
+    <div class="linha">
+      <!-- autofocus no "Voltar": o caminho seguro é o padrão, evita clique sem querer -->
+      <button value="nao" autofocus>Voltar</button>
+      <button value="sim" id="dialogo-sim" class="primario">Sim, tenho certeza</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="lista-de-tarefas.js" defer></script>
+</body>
+</html>
